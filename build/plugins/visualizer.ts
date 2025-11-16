@@ -1,11 +1,10 @@
-import { visualizer } from "rollup-plugin-visualizer"
+import { visualizer } from 'rollup-plugin-visualizer'
 
-export default function createTransform() {
-  return process.env.UNI_PLATFORM === "h5"
-    ? visualizer({
-        gzipSize: true,
-        brotliSize: true,
-        filename: "stats.html",
-      })
-    : null
+export default function useVisualizerPlugin() {
+  return visualizer({
+    filename: './node_modules/.cache/visualizer/stats.html',
+    open: true,
+    gzipSize: true,
+    brotliSize: true,
+  })
 }

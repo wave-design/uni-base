@@ -1,8 +1,7 @@
-import { createPinia } from "pinia"
-import { createPersistedState } from "pinia-plugin-persistedstate"
+import { createPinia, setActivePinia } from 'pinia'
+import { createPersistedState } from 'pinia-plugin-persistedstate' // 数据持久化
 
 const store = createPinia()
-
 store.use(
   createPersistedState({
     storage: {
@@ -12,4 +11,8 @@ store.use(
   }),
 )
 
+setActivePinia(store)
+
 export default store
+
+// 模块统一导出

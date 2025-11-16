@@ -1,37 +1,39 @@
-import uni from '@dcloudio/vite-plugin-uni';
-import unocss from 'unocss/vite';
-import uniPages from '@uni-helper/vite-plugin-uni-pages';
-import uniLayouts from '@uni-helper/vite-plugin-uni-layouts';
-import uniPlatform from '@uni-helper/vite-plugin-uni-platform';
-import uniManifest from '@uni-helper/vite-plugin-uni-manifest';
+import process from 'node:process'
+import useComponentsPlugin from './components'
+import useFixVitePluginVue from './fix-vite-plugin-vue'
+import useHtmlTransformPlugin from './html-transform'
+import useAutoImportPlugin from './import'
+import useUniLayoutsPlugin from './layouts'
+import useUniManifestPlugin from './manifest'
+import useBundleOptimizerPlugin from './optimizer'
+import useUniPagesPlugin from './pages'
+import useUniPlatformPlugin from './platform'
+import useViteRestartPlugin from './restart'
+import useUniKuRootPlugin from './root'
+import useUniPlugin from './uni'
+import useUnoCssPlugin from './unocss'
+import useVisualizerPlugin from './visualizer'
 
-import createFix from './fix';
-import createHtml from './html';
-import createTransform from './transform';
-import createVisualizer from './visualizer';
-import createAutoImport from './auto-import';
-import createComponents from './components';
-import createCompression from './compression';
+export default function createVitePlugins(mode: string, env: Record<string, string>) {
+  const UNI_PLATFORM = process.env.UNI_PLATFORM
+  const { VITE_APP_TITLE, VITE_COPY_NATIVE_RES_ENABLE } = env
 
-export default function createVitePlugins(env: Record<string, string>) {
-  const vitePlugins: any[] = [
-    uniLayouts(),
-    uniPlatform(),
-    uniManifest(),
-    uniPages({
-      exclude: ['**/components/**/**.*'],
-      subPackages: [],
-      dts: 'src/types/uni-pages.d.ts',
-    }),
-    uni(),
-    unocss(),
-  ];
-  // vitePlugins.push(createFix());
-  vitePlugins.push(createHtml());
-  vitePlugins.push(createComponents());
-  vitePlugins.push(createVisualizer());
-  vitePlugins.push(createTransform());
-  vitePlugins.push(createAutoImport());
-  vitePlugins.push(createCompression());
-  return vitePlugins;
+  const plugins: any[] = [
+    useUniLayoutsPlugin(),
+    useUniPlatformPlugin(),
+    useUniManifestPlugin(),
+    useUniPagesPlugin(),
+    useBundleOptimizerPlugin(),
+    useUniKuRootPlugin(),
+    useUniPlugin(),
+    useFixVitePluginVue(),
+    useUnoCssPlugin(),
+    useAutoImportPlugin(),
+    useViteRestartPlugin(),
+    UNI_PLATFORM === 'h5' ? useHtmlTransformPlugin(VITE_APP_TITLE) : null,
+    UNI_PLATFORM === 'h5' && mode === 'production' ? useVisualizerPlugin() : null,
+    useComponentsPlugin(),
+  ]
+
+  return plugins.filter(Boolean)
 }
