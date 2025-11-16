@@ -12,7 +12,7 @@
 
   "typescript.tsdk": "node_modules\\typescript\\lib",
 
-  "prettier.enable": false,
+  "prettier.enable": true,
   "editor.formatOnSave": false,
 
   "editor.codeActionsOnSave": {

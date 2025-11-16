@@ -1,5 +1,5 @@
 <template>
-  <view>123</view>
+  <view>首页</view>
 </template>
 
 <script setup lang="ts">

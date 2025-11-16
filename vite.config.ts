@@ -26,18 +26,19 @@ export default defineConfig(({ command, mode }) => {
   const {
     VITE_APP_PORT,
     VITE_SERVER_BASEURL,
-    VITE_APP_TITLE,
     VITE_DELETE_CONSOLE,
-    VITE_APP_PUBLIC_BASE,
+    VITE_APP_BASE,
+    VITE_API_PREFIX,
     VITE_APP_PROXY_ENABLE,
-    VITE_APP_PROXY_PREFIX,
-    VITE_COPY_NATIVE_RES_ENABLE,
+    VITE_API_BASE_URL,
+    VITE_HTTP_BASEURL,
   } = env
+  console.log('🚀 ~ vite.config.ts:36 ~ VITE_HTTP_BASEURL:', VITE_HTTP_BASEURL)
   console.log('环境变量 env -> ', env)
 
   return defineConfig({
     envDir: './env', // 自定义env目录
-    base: VITE_APP_PUBLIC_BASE,
+    base: VITE_APP_BASE,
     plugins: useVitePlugins(mode, env),
     define: {
       __VITE_APP_PROXY__: JSON.stringify(VITE_APP_PROXY_ENABLE),
@@ -60,20 +61,15 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     server: {
-      host: '0.0.0.0',
       hmr: true,
       port: Number.parseInt(VITE_APP_PORT, 10),
-      // 仅 H5 端生效，其他端不生效（其他端走build，不走devServer)
-      proxy: JSON.parse(VITE_APP_PROXY_ENABLE)
-        ? {
-            [VITE_APP_PROXY_PREFIX]: {
-              target: VITE_SERVER_BASEURL,
-              changeOrigin: true,
-              // 后端有/api前缀则不做处理，没有则需要去掉
-              rewrite: path => path.replace(new RegExp(`^${VITE_APP_PROXY_PREFIX}`), ''),
-            },
-          }
-        : undefined,
+      proxy: {
+        [VITE_API_PREFIX]: {
+          target: VITE_API_BASE_URL,
+          changeOrigin: true,
+          rewrite: path => path.replace(new RegExp(`^${VITE_API_PREFIX}`), ''),
+        },
+      },
     },
     esbuild: {
       drop: VITE_DELETE_CONSOLE === 'true' ? ['console', 'debugger'] : [],
