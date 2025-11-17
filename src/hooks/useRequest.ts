@@ -1,18 +1,18 @@
-import type { Ref } from 'vue'
-import { ref } from 'vue'
+import type { Ref } from "vue";
+import { ref } from "vue";
 
 interface IUseRequestOptions<T> {
   /** 是否立即执行 */
-  immediate?: boolean
+  immediate?: boolean;
   /** 初始化数据 */
-  initialData?: T
+  initialData?: T;
 }
 
 interface IUseRequestReturn<T, P = undefined> {
-  loading: Ref<boolean>
-  error: Ref<boolean | Error>
-  data: Ref<T | undefined>
-  run: (args?: P) => Promise<T | undefined>
+  loading: Ref<boolean>;
+  error: Ref<boolean | Error>;
+  data: Ref<T | undefined>;
+  run: (args?: P) => Promise<T | undefined>;
 }
 
 /**
@@ -27,28 +27,28 @@ export default function useRequest<T, P = undefined>(
   func: (args?: P) => Promise<T>,
   options: IUseRequestOptions<T> = { immediate: false },
 ): IUseRequestReturn<T, P> {
-  const loading = ref(false)
-  const error = ref(false)
-  const data = ref<T | undefined>(options.initialData) as Ref<T | undefined>
+  const loading = ref(false);
+  const error = ref(false);
+  const data = ref<T | undefined>(options.initialData) as Ref<T | undefined>;
   const run = async (args?: P) => {
-    loading.value = true
+    loading.value = true;
     return func(args)
       .then((res) => {
-        data.value = res
-        error.value = false
-        return data.value
+        data.value = res;
+        error.value = false;
+        return data.value;
       })
       .catch((err) => {
-        error.value = err
-        throw err
+        error.value = err;
+        throw err;
       })
       .finally(() => {
-        loading.value = false
-      })
-  }
+        loading.value = false;
+      });
+  };
 
   if (options.immediate) {
-    (run as (args: P) => Promise<T | undefined>)({} as P)
+    (run as (args: P) => Promise<T | undefined>)({} as P);
   }
-  return { loading, error, data, run }
+  return { loading, error, data, run };
 }
